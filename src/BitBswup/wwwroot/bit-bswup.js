@@ -1,12 +1,14 @@
 ﻿; (function () {
-    const options = extract();
-
-    info('starting...')
-
     if (!('serviceWorker' in navigator)) {
         warn('no serviceWorker in navigator');
         return;
     }
+
+    info('starting...')
+
+    const options = extract();
+
+    startBlazor();
 
     navigator.serviceWorker.register(options.sw, { scope: options.scope }).then(prepareRegistration);
     navigator.serviceWorker.addEventListener('message', handleMessage);
@@ -87,6 +89,26 @@
     }
 
     // ============================================================
+
+    function startBlazor() {
+        const scriptTags = [].slice.call(document.scripts);
+
+        const blazorWasmScriptTag = scriptTags.find(s => s.src && s.src.indexOf('_framework/blazor.webassembly.js') !== -1);
+        if (!blazorWasmScriptTag) {
+            warn('"blazor.webassembly.js" script tag not found!');
+            return;
+        }
+
+        const autostart = blazorWasmScriptTag.attributes['autostart'];
+        if (!autostart || autostart.value !== 'false') {
+            warn('no "autostart=false" found on "blazor.webassembly.js" script tag!');
+            return;
+        }
+
+        if (navigator.serviceWorker.controller) {
+            Blazor.start();
+        }
+    }
 
     function extract() {
         const bitBswupScript = document.currentScript;
