@@ -143,13 +143,12 @@
         options.handler && options.handler(...arguments);
     }
 
+    // TODO: apply log options: info, verbode, debug, error, ...
     function info(text) {
-        // TODO: apply log options: info, verbode, debug, error, ...
-        options.log && console.log(`%cBitBSWUP: ${text}`, 'color:lightblue');
+        console.log(`%cBitBSWUP: ${text}`, 'color:lightblue');
     }
-
     function warn(text) {
-        options.log && console.warn(`BitBSWUP:${text}`);
+        console.warn(`BitBSWUP:${text}`);
     }
 
 }());
